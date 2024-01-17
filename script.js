@@ -90,11 +90,11 @@ const changeScale = (rootNote, scaleIntention, scaleType, showRelativeKey) => {
     switch (scaleType) {
         case 'pentatonic':
             if (scaleIntention == 'minor') {
-                scaleNotes.splice(5,1)
-                scaleNotes.splice(1,1)
+                scaleNotes[1] = undefined
+                scaleNotes[5] = undefined
             } else {
-                scaleNotes.splice(6,1)
-                scaleNotes.splice(3,1)   
+                scaleNotes[3] = undefined
+                scaleNotes[6] = undefined  
             }
             break;
         case 'arpeggioTriad':
@@ -143,6 +143,6 @@ guitarControls.addEventListener('change', (event) => {
     let scaleNote = (document.querySelector('#scaleNote').value).toUpperCase()
     let scaleIntention = document.querySelector('#scaleIntention').value
     let scaleType = document.querySelector('#scaleType').value
-    let showRelativeKey = document.querySelector('#relativeKey')
+    let showRelativeKey = document.querySelector('#relativeKey').checked
     changeScale(scaleNote, scaleIntention, scaleType, showRelativeKey)
 })
