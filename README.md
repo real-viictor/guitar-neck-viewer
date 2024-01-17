@@ -13,7 +13,7 @@ A ideia principal ao desenvolver este projeto é:
 
 ### 💻 **Tecnologias Utilizadas**
 
-![HTML](https://github.com/real-viictor/utilities/blob/main/HTML-Logo.png)![CSS](https://github.com/real-viictor/utilities/blob/main/CSS-Logo.png) ![JS](https://github.com/real-viictor/utilities/blob/main/JS-Logo.png) ![NodeJS](https://github.com/real-viictor/utilities/blob/main/NodeJS-Logo.png) ![MySQL](https://github.com/real-viictor/utilities/blob/main/MySQL-Logo.png)
+![HTML](https://github.com/real-viictor/utilities/blob/main/HTML-Logo.png)![CSS](https://github.com/real-viictor/utilities/blob/main/CSS-Logo.png) ![JS](https://github.com/real-viictor/utilities/blob/main/JS-Logo.png)
 
 ### **Autor**
 
