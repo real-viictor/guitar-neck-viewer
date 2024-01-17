@@ -40,16 +40,14 @@ const createNotes = (...tuneStrings) => {
     });
 };
 
-const changeScale = (rootNote, scaleType) => {
+const changeScale = (rootNote, scaleIntention, scaleType, showRelativeKey) => {
     let scaleNotes    
     let guitarNotes = Array.from(guitarNeck.getElementsByClassName('note'))
 
     const getMajorScale = (rootNote) => {
     
-        // Encontrar a posição da nota raiz no array
         const rootIndex = notesOrder.indexOf(rootNote);
     
-        // Criar a escala maior
         const majorScale = [
             notesOrder[rootIndex],
             notesOrder[(rootIndex + 2) % 12],
@@ -65,10 +63,8 @@ const changeScale = (rootNote, scaleType) => {
     
     const getMinorScale = (rootNote) => {
 
-        // Encontrar a posição da nota raiz no array
         const rootIndex = notesOrder.indexOf(rootNote);
     
-        // Criar a escala menor
         const minorScale = [
             notesOrder[rootIndex],
             notesOrder[(rootIndex + 2) % 12],
@@ -82,7 +78,7 @@ const changeScale = (rootNote, scaleType) => {
         return minorScale
     }
 
-    switch (scaleType) {
+    switch (scaleIntention) {
         case 'minor':
             scaleNotes = getMinorScale(rootNote)
             break;
@@ -90,11 +86,47 @@ const changeScale = (rootNote, scaleType) => {
             scaleNotes = getMajorScale(rootNote)
             break;
     }
+
+    switch (scaleType) {
+        case 'pentatonic':
+            if (scaleIntention == 'minor') {
+                scaleNotes.splice(5,1)
+                scaleNotes.splice(1,1)
+            } else {
+                scaleNotes.splice(6,1)
+                scaleNotes.splice(3,1)   
+            }
+            break;
+        case 'arpeggioTriad':
+            scaleNotes = [scaleNotes[0], scaleNotes[2], scaleNotes[4]]
+            break;
+        case 'arpeggioTetrad':
+            scaleNotes = [scaleNotes[0], scaleNotes[2], scaleNotes[4], scaleNotes[6]]
+            break;
+    }
     
+    //Para cada nota, tratar com as condições definidas abaixo para determinar se a nota deve ser exibida ou não
     guitarNotes.forEach(note => {
+        //Checando se a nota é a tônica da escala, caso positivo, adicione a classe .keyNote para ressaltá-la como a tônica
+        if(note.innerHTML == scaleNotes[0]) {
+            note.classList.add('keyNote')
+        } else {
+            //Caso contrário, garanta que as notas não terão a classe .keyNote para que não sejam mostradas como tônica
+            note.classList.remove('keyNote')
+        } 
+
+        if (note.innerHTML == scaleNotes[5] && showRelativeKey) {
+            note.classList.add('relativeKey')
+        } else {
+            note.classList.remove('relativeKey')
+        }
+        
+
+        //Se a nota atual do loop constar dentro do array de notas da escala, então adicione a classe .active para mostrá-la
         if(scaleNotes.includes(note.innerText)) {
             note.classList.add('active')
         } else {
+            //Caso contrário, remova a classe para ela não ser exibida
             note.classList.remove('active')
         }
     })
@@ -105,10 +137,12 @@ const changeScale = (rootNote, scaleType) => {
 createFrets(totalFrets)
 createStrings(totalStrings)
 createNotes(7, 2, 10, 5, 0, 7)
-changeScale('C', 'major')
-guitarControls.addEventListener('submit', (event) => {
+changeScale('C', 'major', 'natural')
+guitarControls.addEventListener('change', (event) => {
     event.preventDefault()
     let scaleNote = (document.querySelector('#scaleNote').value).toUpperCase()
+    let scaleIntention = document.querySelector('#scaleIntention').value
     let scaleType = document.querySelector('#scaleType').value
-    changeScale(scaleNote, scaleType)
+    let showRelativeKey = document.querySelector('#relativeKey')
+    changeScale(scaleNote, scaleIntention, scaleType, showRelativeKey)
 })

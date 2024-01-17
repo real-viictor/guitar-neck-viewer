@@ -75,6 +75,14 @@
     display: none;
 }
 
+.note.keyNote {
+    background-color: red;
+}
+
+.note.relativeKey {
+    background-color: darkblue;
+}
+
 .note.active {
     display: block;
 }
