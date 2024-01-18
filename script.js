@@ -44,6 +44,8 @@ const changeScale = (rootNote, scaleIntention, scaleType, showRelativeKey) => {
     let scaleNotes    
     let guitarNotes = Array.from(guitarNeck.getElementsByClassName('note'))
 
+    let relativeKeyNoteIndex = scaleIntention == 'minor' ? 2 : 5
+
     const getMajorScale = (rootNote) => {
     
         const rootIndex = notesOrder.indexOf(rootNote);
@@ -90,18 +92,16 @@ const changeScale = (rootNote, scaleIntention, scaleType, showRelativeKey) => {
     switch (scaleType) {
         case 'pentatonic':
             if (scaleIntention == 'minor') {
-                scaleNotes[1] = undefined
-                scaleNotes[5] = undefined
+                [1, 5].forEach(index => scaleNotes[index] = undefined);
             } else {
-                scaleNotes[3] = undefined
-                scaleNotes[6] = undefined  
+                [3, 6].forEach(index => scaleNotes[index] = undefined); 
             }
             break;
         case 'arpeggioTriad':
-            scaleNotes = [scaleNotes[0], scaleNotes[2], scaleNotes[4]]
+            scaleNotes = [scaleNotes[0], undefined, scaleNotes[2], undefined, scaleNotes[4], undefined, undefined]
             break;
         case 'arpeggioTetrad':
-            scaleNotes = [scaleNotes[0], scaleNotes[2], scaleNotes[4], scaleNotes[6]]
+            scaleNotes = [scaleNotes[0], undefined, scaleNotes[2], undefined, scaleNotes[4], undefined, scaleNotes[6]]
             break;
     }
     
@@ -115,7 +115,7 @@ const changeScale = (rootNote, scaleIntention, scaleType, showRelativeKey) => {
             note.classList.remove('keyNote')
         } 
 
-        if (note.innerHTML == scaleNotes[5] && showRelativeKey) {
+        if (note.innerHTML == scaleNotes[relativeKeyNoteIndex] && showRelativeKey) {
             note.classList.add('relativeKey')
         } else {
             note.classList.remove('relativeKey')
@@ -137,7 +137,7 @@ const changeScale = (rootNote, scaleIntention, scaleType, showRelativeKey) => {
 createFrets(totalFrets)
 createStrings(totalStrings)
 createNotes(7, 2, 10, 5, 0, 7)
-changeScale('C', 'major', 'natural')
+changeScale('C', 'major', 'natural', false)
 guitarControls.addEventListener('change', (event) => {
     event.preventDefault()
     let scaleNote = (document.querySelector('#scaleNote').value).toUpperCase()
