@@ -1,5 +1,7 @@
 //Pegando o elemento pai da guitarra
 let guitarNeck = document.querySelector('.neck');
+//Pegando o controle de afinação na pestana da guitarra
+let nutTuning = document.querySelector('.nut')
 //Definindo em variável o total de trastes que a guitarra terá
 let totalFrets = 22;
 //Definindo em variável o total de cordas da guitarra
@@ -18,6 +20,7 @@ const createFrets = (totalFrets) => {
         guitarNeck.innerHTML+=`<div class="fret" data-fretIndex="${fret + 1}"></div>`;
     }
 }
+
 
 //Função que gera as cordas nos trastes
 const createStrings = (totalStrings) => {
@@ -216,6 +219,18 @@ const changeScale = () => {
 
 }
 
+const getTuningNotes = () => {
+    let tuneStringOne = document.querySelector('#stringOneTune').value
+    let tuneStringTwo = document.querySelector('#stringTwoTune').value
+    let tuneStringThree = document.querySelector('#stringThreeTune').value
+    let tuneStringFour = document.querySelector('#stringFourTune').value
+    let tuneStringFive = document.querySelector('#stringFiveTune').value
+    let tuneStringSix = document.querySelector('#stringSixTune').value
+
+    let tuningNotes = [tuneStringOne, tuneStringTwo, tuneStringThree, tuneStringFour, tuneStringFive, tuneStringSix]
+    return tuningNotes
+}
+
 //Criando os trastes na guitarra
 createFrets(totalFrets)
 
@@ -230,3 +245,4 @@ changeScale('C', 'major', 'natural', false)
 
 //Adicionando um eventListener para detectar qualquer alteração nos controles das escalas, e então rodando a função de alteração da escala automaticamente
 guitarControls.addEventListener('change', changeScale)
+nutTuning.addEventListener('change', createNotes(getTuningNotes))
