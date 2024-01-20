@@ -85,7 +85,7 @@ const showRelativeKey = () => {
 }
 
 const showKeyNote = () => {
-    let rootNote = (document.querySelector('#scaleNote').value).toUpperCase()
+    let rootNote = (document.querySelector('#scale-note').value).toUpperCase()
     let guitarNotes = Array.from(guitarNeck.querySelectorAll('.note'))
 
     guitarNotes.forEach((note) => {
@@ -98,13 +98,14 @@ const showKeyNote = () => {
 }
 
 const changeScale = () => {
+    
     let scaleNotes
 
-    let rootNote = (document.querySelector('#scaleNote').value).toUpperCase()
+    let rootNote = (document.querySelector('#scale-note').value).toUpperCase()
 
-    let scaleIntention = document.querySelector('#scaleIntention').value
+    let scaleIntention = document.querySelector('#scale-intention').value
 
-    let scaleType = document.querySelector('#scaleType').value
+    let scaleType = document.querySelector('#scale-type').value
 
     const getNaturalScale = (rootNote, scaleIntention) => {
         let naturalScale
@@ -195,10 +196,14 @@ const changeScale = () => {
     showScaleNotes(scaleNotes)
 }
 
-createFrets()
-createStrings()
-createNotes()
-tuneGuitar(7,2,10,5,0,7)
-changeScale()
-//TODO: Mudar a função que roda após o evento de change, precisará ser uma função que foque na modificação do braço apenas no que é necessário
-guitarControls.addEventListener('change', changeScale)
+const setupApplication = () => {
+    createFrets()
+    createStrings()
+    createNotes()
+    tuneGuitar(7,2,10,5,0,7)
+    changeScale()
+    //TODO: Mudar a função que roda após o evento de change, precisará ser uma função que foque na modificação do braço apenas no que é necessário
+    guitarControls.addEventListener('change', changeScale)
+}
+
+document.addEventListener('DOMContentLoaded', setupApplication())

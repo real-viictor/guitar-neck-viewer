@@ -105,7 +105,7 @@
     </div>
 
     <form action="" id="guitar-controls" class="copy-disabled">
-        <select id="scaleNote">
+        <select id="scale-note">
             <option value="a">A</option>
             <option value="a#">A#</option>
             <option value="b">B</option>
@@ -120,19 +120,24 @@
             <option value="g#">G#</option> 
         </select>
     
-        <select id="scaleIntention">
+        <select id="scale-intention">
             <option value="major" selected>Major</option>
             <option value="minor">Minor</option>
         </select>
 
-        <select id="scaleType">
+        <select id="scale-type">
             <option value="natural" selected>Natural</option>
             <option value="pentatonic">Pentatonic</option>
         </select>
 
+        <input type="checkbox" name="scale-key" id="scale-key" disabled>
+        <label for="scale-key">Mostrar Tônica</label>
         
-        <input type="checkbox" name="relativeKey" id="relativeKey" disabled>
-        <label for="relativeKey">Mostrar Relativa</label>
+        <input type="checkbox" name="relative-key" id="relative-key" disabled>
+        <label for="relative-key">Mostrar Relativa</label>
+
+        <input type="checkbox" name="show-all-notes" id="show-all-notes" disabled>
+        <label for="show-all-notes">Exibir todas as Notas</label>
     </form>
     
 </body>
