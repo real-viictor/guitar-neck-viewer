@@ -3,6 +3,7 @@ const guitarControls = document.querySelector('#guitar-controls')
 const tuningControls = document.querySelector('#nut-tuning')
 
 const notesOrder = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+const intervalsOrder = ['T', '2m', '2M', '3m', '3M', '4J', '4+', '5J', '5+', '6M', '7m', '7M'];
 
 let totalFrets = 22;
 let totalStrings = 6;
@@ -36,8 +37,19 @@ const createNotes = () => {
     })
 }
 
-const tuneGuitar = (...TuneNotes) => {
-    let guitarNotes = Array.from(guitarNeck.querySelectorAll('.note'))
+const setNoteIntervals = (rootNote = getRootNote()) => {
+    let guitarNotes = getAllNotes()
+    let interval
+
+    guitarNotes.forEach(note => {
+        intervalIndex = (12 + notesOrder.indexOf(note.getAttribute('data-noteValue')) - notesOrder.indexOf(rootNote)) % intervalsOrder.length
+        interval = intervalsOrder[intervalIndex]
+        note.setAttribute('data-interval', interval)
+    })
+}
+
+const tuneGuitar = (...tuneNotes) => {
+    let guitarNotes = getAllNotes()
     let notes
 
     const clearCurrentTuning = () => {
@@ -46,16 +58,16 @@ const tuneGuitar = (...TuneNotes) => {
         })
     }
 
-    const getTuneNotes = (...TuneNotes) => {
+    const getTuneNotes = (...tuneNotes) => {
         let notes = []
-        TuneNotes.forEach((note) => {
+        tuneNotes.forEach((note) => {
             notes.push(note)
         })
 
         return notes
     }
 
-    const insertNoteValues = (TuneNotes) => {
+    const setNoteValueAttribute = (tuneNotes) => {
         let fretIndex
         let stringIndex
 
@@ -63,27 +75,32 @@ const tuneGuitar = (...TuneNotes) => {
             fretIndex = parseInt(note.getAttribute('data-fretindex'))
             stringIndex = parseInt(note.getAttribute('data-stringindex'))
 
-            note.innerText = notesOrder[(TuneNotes[stringIndex - 1] + fretIndex) % 12]
+            note.setAttribute('data-noteValue', notesOrder[(tuneNotes[stringIndex - 1] + fretIndex) % 12])
         })
     }
 
-    notes = getTuneNotes(...TuneNotes)
+    const insertNotesIntoNoteElement = (guitarNotes) => {
+        guitarNotes.forEach(note => {
+            note.innerText = note.getAttribute('data-noteValue')
+        })
+    }
+
+    notes = getTuneNotes(...tuneNotes)
     clearCurrentTuning
-    insertNoteValues(notes)
+    setNoteValueAttribute(notes)
+    insertNotesIntoNoteElement(guitarNotes)
 }
 
 const showAllNotes = (showAllNotes) => {
-    let guitarNotes = Array.from(guitarNeck.querySelectorAll('.note'))
-
     if(showAllNotes) {
-        guitarNotes.forEach((note) => {
-            note.classList.add('active')
-        })
+        guitarNeck.setAttribute('notes-visible', '')
+    } else {
+        guitarNeck.removeAttribute('notes-visible', '')
     }
 }
 
 const showRelativeKey = (rootNote, isShownRelativeKey, scaleIntention) => {
-    let guitarNotes = Array.from(guitarNeck.querySelectorAll('.note'))
+    let guitarNotes = getAllNotes()
     let relativeKey
     let relativeKeyOffset
 
@@ -99,9 +116,8 @@ const showRelativeKey = (rootNote, isShownRelativeKey, scaleIntention) => {
     }
 
     relativeKey = notesOrder[(notesOrder.indexOf(rootNote) + relativeKeyOffset) % 12] 
-    console.log(relativeKey)
     guitarNotes.forEach((note) => {
-        if(note.innerText == relativeKey && isShownRelativeKey) {
+        if(note.getAttribute('data-noteValue') == relativeKey && isShownRelativeKey) {
             note.classList.add('relativeKey')
         } else {
             note.classList.remove('relativeKey')
@@ -109,15 +125,25 @@ const showRelativeKey = (rootNote, isShownRelativeKey, scaleIntention) => {
     })
 }
 
-const showNotesAsIntervals = () => {
-
+const showNotesAsIntervals = (isShownIntervals) => {
+    let guitarNotes = getAllNotes()
+    
+    if (isShownIntervals) {
+        guitarNotes.forEach(note => {
+            note.innerText = note.getAttribute('data-interval')
+        })
+    } else {
+        guitarNotes.forEach(note => {
+            note.innerText = note.getAttribute('data-noteValue')
+        })
+    }
 }
 
 const showKeyNote = (rootNote, isShowKeyNote) => {
-    let guitarNotes = Array.from(guitarNeck.querySelectorAll('.note'))
+    let guitarNotes = getAllNotes()
 
     guitarNotes.forEach((note) => {
-        if(note.innerText == rootNote && isShowKeyNote) {
+        if(note.getAttribute('data-noteValue') == rootNote && isShowKeyNote) {
             note.classList.add('keyNote')
         } else {
             note.classList.remove('keyNote')
@@ -126,25 +152,51 @@ const showKeyNote = (rootNote, isShowKeyNote) => {
     
 }
 
-const modifyNeck = () => {
-    let rootNote = (document.querySelector('#scale-note').value).toUpperCase()
-    let scaleIntention = document.querySelector('#scale-intention').value
-    let scaleType = document.querySelector('#scale-type').value
-    let isShownAllNotes =  document.querySelector('#show-all-notes').checked
-    let isShownKeyNote =  document.querySelector('#show-key-note').checked
-    let isShownRelativeKey =  document.querySelector('#show-relative-key').checked
-    let isShownIntervals =  document.querySelector('#show-notes-as-intervals').checked
+const showScaleNotes = (scaleNotes) => {
+    let guitarNotes = getAllNotes()
+    let isNoteInScale
 
-    changeScale(rootNote, scaleIntention, scaleType)
-    showKeyNote(rootNote, isShownKeyNote)
-    showAllNotes(isShownAllNotes)
-    showRelativeKey(rootNote, isShownRelativeKey, scaleIntention)
+    guitarNotes.forEach((note) => {
+        isNoteInScale = scaleNotes.includes(note.getAttribute('data-noteValue'))
+
+        if(isNoteInScale) {
+            note.classList.add('active')
+        } else {
+            note.classList.remove('active')
+        }
+    })
 }
 
-const changeScale = (rootNote, scaleIntention, scaleType) => {
-    
-    let scaleNotes
+const getRootNote = () => {
+    return (document.querySelector('#scale-note').value).toUpperCase()
+}
 
+const getScaleIntention = () => {
+    return document.querySelector('#scale-intention').value
+}
+
+const getScaleType = () => {
+    return document.querySelector('#scale-type').value
+}
+
+const getShowAllNotesStatus = () => {
+    return document.querySelector('#show-all-notes').checked
+}
+
+const getShowKeyNoteStatus = () => {
+    return document.querySelector('#show-key-note').checked
+}
+
+const getShowRelativeKeyStatus = () => {  
+    return document.querySelector('#show-relative-key').checked
+}
+
+const getShowIntervalsStatus = () => {
+    return document.querySelector('#show-notes-as-intervals').checked
+}
+
+const getDeterminedScale = (rootNote = getRootNote(), scaleIntention = getScaleIntention(), scaleType = getScaleType()) => {
+        
     const getNaturalScale = (rootNote, scaleIntention) => {
         let naturalScale
 
@@ -205,33 +257,42 @@ const changeScale = (rootNote, scaleIntention, scaleType) => {
         return scaleNotes
     }
 
-    const getDeterminedScale = (rootNote, scaleIntention, scaleType) => {
-        let scaleNotes = getNaturalScale(rootNote, scaleIntention)
+    let scaleNotes = getNaturalScale(rootNote, scaleIntention)
 
-        if(scaleType == 'pentatonic') {
-            scaleNotes = getPentatonicScale(scaleNotes, scaleIntention)
-        }
-
-        return scaleNotes
+    if(scaleType == 'pentatonic') {
+        scaleNotes = getPentatonicScale(scaleNotes, scaleIntention)
     }
 
-    const showScaleNotes = (scaleNotes) => {
-        let guitarNotes = Array.from(guitarNeck.querySelectorAll('.note'))
-        let isNoteInScale
+    return scaleNotes
+}
 
-        guitarNotes.forEach((note) => {
-            isNoteInScale = scaleNotes.includes(note.innerText)
+const getAllNotes = () => {
+    return Array.from(guitarNeck.querySelectorAll('.note'))
+}
 
-            if(isNoteInScale) {
-                note.classList.add('active')
-            } else {
-                note.classList.remove('active')
-            }
-        })
-    }
+const modifyNeck = () => {
+    let rootNote = getRootNote()
+    let scaleIntention = getScaleIntention()
+    let scaleType = getScaleType()
+    let isShownKeyNote = getShowKeyNoteStatus()
+    let isShownAllNotes = getShowAllNotesStatus()
+    let isShownRelativeKey = getShowRelativeKeyStatus()
+    let isShownIntervals = getShowIntervalsStatus()
+
+    changeScale(rootNote, scaleIntention, scaleType)
+    showAllNotes(isShownAllNotes)
+    showKeyNote(rootNote, isShownKeyNote)
+    showRelativeKey(rootNote, isShownRelativeKey, scaleIntention)
+    showNotesAsIntervals(isShownIntervals)
+}
+
+const changeScale = (rootNote, scaleIntention, scaleType) => {
+
+    let scaleNotes
 
     scaleNotes = getDeterminedScale(rootNote, scaleIntention, scaleType)
     showScaleNotes(scaleNotes)
+    setNoteIntervals(rootNote)
 }
 
 const setupApplication = () => {
@@ -239,8 +300,8 @@ const setupApplication = () => {
     createStrings()
     createNotes()
     tuneGuitar(7,2,10,5,0,7)
+    setNoteIntervals()
     modifyNeck()
-    //TODO: Mudar a função que roda após o evento de change, precisará ser uma função que foque na modificação do braço apenas no que é necessário
     guitarControls.addEventListener('change', modifyNeck)
 }
 

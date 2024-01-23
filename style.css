@@ -116,7 +116,7 @@ select:focus {
     background-color: darkblue;
 }
 
-.note.active {
+.note.active, .neck[notes-visible] .note {
     display: block;
 }
 
