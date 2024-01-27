@@ -43,6 +43,12 @@ select:focus {
     position: relative;
 }
 
+.neck[free-mode] .string:hover {
+    background-color: lightgrey;
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
 .fret {
     border-right: 2px solid grey;
     height: 100%;
@@ -57,6 +63,7 @@ select:focus {
 .string {
     text-align: center;
     height: 100%;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
