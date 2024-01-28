@@ -144,6 +144,10 @@ const getAllNotes = () => {
     return Array.from(guitarNeck.querySelectorAll('.note'))
 }
 
+const getShowPentatonicScaleStatus = () => {
+    return document.querySelector('#highlight-pentatonic-scale').checked
+}
+
 const setNoteIntervals = (rootNote = getRootNote()) => {
     let guitarNotes = getAllNotes()
     let interval
@@ -226,9 +230,9 @@ const showRelativeKey = (rootNote, isShownRelativeKey, scaleIntention) => {
     relativeKey = notesOrder[(notesOrder.indexOf(rootNote) + relativeKeyOffset) % 12] 
     guitarNotes.forEach((note) => {
         if(note.getAttribute('data-note-value') == relativeKey && isShownRelativeKey) {
-            note.classList.add('relativeKey')
+            note.classList.add('relative-key')
         } else {
-            note.classList.remove('relativeKey')
+            note.classList.remove('relative-key')
         }
     })
 }
@@ -248,9 +252,9 @@ const showKeyNote = (rootNote, isShowKeyNote) => {
 
     guitarNotes.forEach((note) => {
         if(note.getAttribute('data-note-value') == rootNote && isShowKeyNote) {
-            note.classList.add('keyNote')
+            note.classList.add('key-note')
         } else {
-            note.classList.remove('keyNote')
+            note.classList.remove('key-note')
         }
     })
     
@@ -271,6 +275,22 @@ const showScaleNotes = (scaleNotes) => {
     })
 }
 
+const showPentatonicNotes = (isShownPentatonicScale = getShowPentatonicScaleStatus()) => {
+    let pentatonicScale = getDeterminedScale(getRootNote(), getScaleIntention(), 'pentatonic')
+    let guitarNotes = getAllNotes()
+
+    guitarNotes.forEach(note => {
+        if(pentatonicScale.includes(note.getAttribute('data-note-value')) && isShownPentatonicScale) {
+            note.classList.add('pentatonic-note')
+        } else {
+            note.classList.remove('pentatonic-note')
+        }
+    })
+
+    
+    
+}
+
 const modifyNeck = () => {
     let rootNote = getRootNote()
     let scaleIntention = getScaleIntention()
@@ -280,6 +300,7 @@ const modifyNeck = () => {
     let isShownRelativeKey = getShowRelativeKeyStatus()
     let isShownIntervals = getShowIntervalsStatus()
     let isFreeModeOn = getFreeModeStatus()
+    let isShownPentatonicScale = getShowPentatonicScaleStatus()
 
     changeScale(rootNote, scaleIntention, scaleType)
     showAllNotes(isShownAllNotes)
@@ -287,6 +308,7 @@ const modifyNeck = () => {
     showRelativeKey(rootNote, isShownRelativeKey, scaleIntention)
     showNotesAsIntervals(isShownIntervals)
     setFreeMode(isFreeModeOn)
+    showPentatonicNotes(isShownPentatonicScale)
 }
 
 const changeScale = (rootNote, scaleIntention, scaleType) => {
